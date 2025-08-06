@@ -1,41 +1,43 @@
 import streamlit as st
-import cohere
-
 from utils import extract_text_from_pdf, extract_text_from_docx
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
+import openai
 
-# Load Cohere API key from secrets
-cohere_client = cohere.Client(st.secrets["cohere"]["api_key"])
-
-# Load the embedding model (cached)
+# Load local embedding model (cached)
 @st.cache_resource
-def load_model():
+def load_embedding_model():
     st.write("🔍 Loading embedding model...")
     return SentenceTransformer("all-MiniLM-L6-v2")
 
-model = load_model()
+model = load_embedding_model()
 
-# Use Cohere to generate AI summary
+# Configure OpenRouter (GPT-3.5 via OpenRouter)
+openai.api_base = "https://openrouter.ai/api/v1"
+openai.api_key = st.secrets["openrouter"]["api_key"]
+
+# Generate summary using GPT-3.5 (via OpenRouter)
 def generate_fit_summary(job_desc, resume_text):
     prompt = f"""
-You are an assistant helping a recruiter.
-Given the job description and candidate resume, write 1–2 sentences about why this candidate is a good fit.
+You are an AI assistant helping a recruiter.
 
-Job:
+Job Description:
 {job_desc}
 
-Resume:
-{resume_text[:1500]}
+Candidate Resume:
+{resume_text[:2500]}
+
+Task:
+Write 1–2 sentences explaining whether this candidate is a good or bad fit for the job, and why. Be specific about relevant skills or lack of alignment.
 """
     try:
-        response = cohere_client.generate(
-            model="command",
-            prompt=prompt,
-            max_tokens=100,
-            temperature=0.7
+        response = openai.ChatCompletion.create(
+            model="openai/gpt-3.5-turbo",
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.7,
+            max_tokens=150
         )
-        return response.generations[0].text.strip()
+        return response.choices[0].message.content.strip()
     except Exception as e:
         return f"⚠️ Error generating summary: {e}"
 
@@ -111,11 +113,12 @@ if st.button("🚀 Match Candidates"):
 
             st.subheader("🏆 Top 10 Matches")
 
-            for match in top_matches:
-                st.markdown(f"**{match['id']}** — Similarity: `{match['score']}`")
+            for i, match in enumerate(top_matches, 1):
+                st.markdown(f"**{i}. {match['id']}** — Similarity: `{match['score']}`")
                 with st.spinner("🤖 Generating AI summary..."):
                     summary = generate_fit_summary(job_description, match["text"])
                     st.markdown(f"**AI Summary:** {summary}")
 
         except Exception as e:
             st.error(f"🚨 Matching failed: {e}")
+            
