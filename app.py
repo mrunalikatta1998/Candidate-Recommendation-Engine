@@ -1,8 +1,12 @@
 import streamlit as st
+import nltk
+
 from utils import extract_text_from_pdf, extract_text_from_docx
 from sentence_transformers import SentenceTransformer
 from sklearn.metrics.pairwise import cosine_similarity
 import openai
+
+nltk.download('punkt')
 
 # Load local embedding model (cached)
 @st.cache_resource
