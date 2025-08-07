@@ -8,7 +8,7 @@ import openai
 @st.cache_resource
 def load_embedding_model():
     st.write("🔍 Loading embedding model...")
-    return SentenceTransformer("all-MiniLM-L6-v2")
+    return SentenceTransformer("models/all-MiniLM-L6-v2")
 
 model = load_embedding_model()
 
