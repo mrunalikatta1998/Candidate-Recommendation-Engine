@@ -7,3 +7,4 @@ PyPDF2==3.0.1
 python-docx==1.2.0
 openai==0.28
 nltk==3.8.1
+huggingface_hub==0.14.1
