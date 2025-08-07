@@ -1,92 +1,107 @@
-# 🧠 Candidate Recommendation Engine — SproutsAI Take-Home Assignment
+# 🧠 Candidate Recommendation Engine
 
-A web app that recommends the **most relevant candidates** for a given job description using semantic similarity and AI-powered summaries.
+A web application that recommends the most relevant candidates for a given job description using semantic search and AI-generated summaries.
 
-Built as part of the take-home assignment for the **SproutsAI Machine Learning Engineer Internship**.
+Built using `Streamlit`, `sentence-transformers`, `scikit-learn`, and GPT-3.5 via OpenRouter API.
 
 ---
 
-## 🚀 Public App Link
+## 🚀 Live Demo
+
 👉 [https://mrunalikatta1998-candidate-recommendation-engine.streamlit.app](https://mrunalikatta1998-candidate-recommendation-engine.streamlit.app)
 
-No login required. Paste job description + resumes → get AI-ranked matches and summaries.
+No login required. Paste a job description, upload resumes (PDF/DOCX) or paste them as text, and get top-ranked matches with AI summaries.
 
 ---
 
-## 🧩 Features Implemented
-- 📥 Accept job description (text input)
-- 📂 Accept multiple resumes (PDF or plain text)
-- 🤖 Generate embeddings using `sentence-transformers`
-- 📐 Compute **cosine similarity** between job and resumes
-- 🏆 Display top 5–10 relevant candidates (name + similarity)
-- 🧠 BONUS: Generate smart AI summaries using **GPT-3.5 via OpenRouter**
+## ✅ Features & Implementation
+
+- 📝 Accepts job description via text input
+- 📂 Accepts resumes in two formats:
+  - Uploaded files (PDF or DOCX)
+  - Pasted plain text for each candidate
+- 📄 Parses resumes using `PyPDF2` and `python-docx`
+- 🤖 Generates semantic embeddings with `"paraphrase-MiniLM-L6-v2"` model from `sentence-transformers`
+- 📐 Computes **cosine similarity** between job and each resume
+- 🏆 Displays top 10 candidates sorted by similarity score
+- 🧠 For each match, generates a GPT-3.5 summary explaining the fit using OpenRouter API
 
 ---
 
 ## 🛠️ Tech Stack
-| Layer         | Tool / Library                      |
-|---------------|-------------------------------------|
-| Frontend UI   | Streamlit                           |
-| Embeddings    | `sentence-transformers` (MiniLM)    |
-| Similarity    | Cosine similarity (`scikit-learn`)  |
-| Summarization | GPT-3.5 via OpenRouter (`openai==0.28`) |
-| Hosting       | Streamlit Cloud                     |
+
+| Component      | Tool / Library                        |
+|----------------|----------------------------------------|
+| UI             | Streamlit                              |
+| Embeddings     | sentence-transformers (MiniLM model)   |
+| File Parsing   | PyPDF2, python-docx                    |
+| Similarity     | scikit-learn (cosine similarity)       |
+| Summarization  | GPT-3.5 via OpenRouter API (openai)    |
+| Hosting        | Streamlit Cloud                        |
 
 ---
 
-## ✅ My Approach
-- Used MiniLM model from `sentence-transformers` for light-weight embeddings
-- Used `PyPDF2` and `python-docx` to extract text from uploaded resumes
-- Matched job ↔ resumes using cosine similarity of embeddings
-- Integrated GPT-3.5 via OpenRouter to generate 2-line summaries on why a resume is (or isn’t) a good fit
-- Used `.streamlit/secrets.toml` to keep API keys secure
+## 🔍 How It Works
 
----
-
-## 🧠 Assumptions
-- Resumes will be either PDFs or pasted text
-- One job description is matched against many candidates at once
-- Summaries use 2500-character max chunk from resumes
-- Free-tier OpenRouter GPT-3.5 is used for bonus feature
-- Similarity threshold not enforced — sorted by cosine distance only
-
+1. **Input**: User provides a job description and resumes (files or text).
+2. **Preprocessing**: Text is extracted from PDFs or DOCX resumes.
+3. **Embedding**: Job description and each resume are converted into vector embeddings using MiniLM.
+4. **Matching**: Cosine similarity scores are calculated between job and each resume.
+5. **Ranking**: Top 10 resumes with highest similarity are shown.
+6. **Summarization**: GPT-3.5 generates a 2-line explanation for each match, stating why the candidate is (or isn’t) a good fit.
 
 ---
 
 ## 📁 Project Structure
+
 ```
-Candidate-Recommendation-Engine/
-├── app.py                  # Main Streamlit app
-├── utils.py                # PDF/DOCX parsing
-├── requirements.txt        # All dependencies
-├── .gitignore              # Ignore secrets, venv, cache
+candidate-recommendation-engine/
+├── app.py                # Main Streamlit app logic
+├── utils.py              # Functions to extract text from PDF/DOCX
+├── requirements.txt      # Python dependencies
+├── .gitignore            # Ignore secrets, venv, pycache
 └── .streamlit/
-    └── secrets.toml        # Secure OpenRouter key (excluded from Git)
+    └── secrets.toml      # OpenRouter API key (not committed)
 ```
 
 ---
 
 ## 🧪 Run Locally
-```bash
-# 1. Create and activate virtual env
-python -m venv venv310
-venv310\Scripts\activate
 
-# 2. Install required packages
+```bash
+# 1. Clone the repository
+git clone https://github.com/mrunalikatta1998/candidate-recommendation-engine.git
+cd candidate-recommendation-engine
+
+# 2. Create a virtual environment
+python -m venv venv310
+venv310\Scripts\activate   # On Windows
+
+# 3. Install dependencies
 pip install -r requirements.txt
 
-# 3. Add your API key to .streamlit/secrets.toml
+# 4. Add your OpenRouter API key to .streamlit/secrets.toml
 
-# 4. Start the app
+# 5. Launch the app
 streamlit run app.py
 ```
 
 ---
 
-## 👩‍💻 Developed By
-**Mrunali Katta**  
-🔗 [GitHub Profile](https://github.com/mrunalikatta1998)
+## 🔐 API Key Setup
+
+To use GPT-3.5 summarization, set up your `.streamlit/secrets.toml` file like this:
+
+```toml
+[openrouter]
+api_key = "your_openrouter_api_key"
+```
+
+This file is excluded from Git using `.gitignore`.
 
 ---
 
-✅ Designed specifically for SproutsAI Take-Home Evaluation
+## 👩‍💻 Author
+
+**Mrunali Katta**  
+🔗 [GitHub Profile](https://github.com/mrunalikatta1998)
