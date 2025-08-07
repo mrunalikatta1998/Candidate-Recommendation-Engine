@@ -101,6 +101,16 @@ This file is excluded from Git using `.gitignore`.
 
 ---
 
+## 🎥 Demo Videos
+
+### 📂 Resume Upload Flow
+<video src="https://github.com/user-attachments/assets/7fcb4a27-99aa-4469-b4bb-f28c897d06d0" controls width="100%"></video>
+
+### 📝 Paste Resume Text Flow
+<video src="https://github.com/user-attachments/assets/d8ddcdfb-ea95-4236-9545-7d4349258036" controls width="100%"></video>
+
+---
+
 ## 👩‍💻 Author
 
 **Mrunali Katta**  
